@@ -7,7 +7,7 @@ This script performs 2 functions.
 
 ## Instructions
 
-### Run the following on the cli.
+### Run the following on the cli
 
 ```bash
 python Instruqtupdate.py
