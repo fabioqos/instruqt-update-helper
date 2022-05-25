@@ -10,7 +10,7 @@ def parse_arguments():
     parser.add_argument('--DEBUG', '-d', action='store_true', default=False, dest='level',
                         help='Set logging level to DEBUG.')
     parser.add_argument('-c', action='store', type=str, dest='config_file', default='config/instruqt.conf',
-                        help='Specify the config file.  The default is instruqt.conf')
+                        help='Specify the config file.  The default is config/instruqt.conf')
 
     results = parser.parse_args()
     config = SafeConfigParser()
