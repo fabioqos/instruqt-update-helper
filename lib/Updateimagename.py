@@ -23,7 +23,7 @@ def get_old_vm_image(config):
     return config.get('oldimage', 'image').split()[0]
 
 def get_new_vm_image(config):
-    return config.get('newimage', 'image').split()
+    return config.get('newimage', 'image').split()[0]
 
 def get_backup_dir(config):
     return config.get('general', 'backupdir')
@@ -33,7 +33,9 @@ def UpdateImageNames(config):
 
     labs = getlabs(config)
     logging.debug("Labs: {}".format(' '.join(map(str, labs))))
-    listdirectory(config)
+    
+    dirlisting = listdirectory(config)
+    logging.debug('Directory list: {}'.format(dirlisting))
 
     labrootdir = getlabrootdir(config)
     logging.debug("Lab root directory: {}".format(labrootdir))
@@ -44,28 +46,34 @@ def UpdateImageNames(config):
     newvm = get_new_vm_image(config)
     logging.debug("New VM image: {}".format(newvm))
 
-    # For debugging purposes, I'm hardcoding the lab to test.
-    configyml = parsetrackconfig('test', labrootdir)
-    logging.debug('Config YML: {}'.format(configyml))
+    configfind = findconfig(labs, dirlisting)
+    logging.debug('Labs {} found.'.format(configfind))
 
-    newconfigyml = changevmimage(oldvm, newvm, configyml)
-    logging.debug('New Config YML: {}'.format(newconfigyml))
+    labstoupdate = needsupdating(configfind, newvm,labrootdir)
+    logging.debug('Labs to update {}.'.format(labstoupdate))
 
     backupdir = createbackupdir(get_backup_dir(config))
     logging.debug('New backup dir {} created.'.format(backupdir))
 
-    backup = createbackupconfig('test', labrootdir, backupdir)
-    logging.debug('Backup created at {}'.format(backup))
+    for lab in labstoupdate:
 
-    writtenconfig = writeconfig(newconfigyml, 'test', labrootdir)
-    logging.debug('Config for {}, written'.format(writtenconfig))
+        configyml = parsetrackconfig(lab, labrootdir)
+        logging.debug('Config YML: {}'.format(configyml))
+
+        newconfigyml = changevmimage(oldvm, newvm, configyml)
+        logging.debug('New Config YML: {}'.format(newconfigyml))
+
+        backup = createbackupconfig(lab, labrootdir, backupdir)
+        logging.debug('Backup created at {}'.format(backup))
+
+        writtenconfig = writeconfig(newconfigyml, lab, labrootdir)
+        logging.debug(writtenconfig)
     
     return
 
 def listdirectory(config):
     dir = config.get('instruqt', 'rhel_labs_root_dir')
-    logging.debug('Directory list: {}'.format(os.listdir(dir)))
-    return
+    return os.listdir(dir)
 
 def changevmimage(oldvm, newvm, configyaml):
     # This method will search and replace the instruqtconfigyaml for the oldimage and replace it with newimage.
@@ -78,7 +86,7 @@ def changevmimage(oldvm, newvm, configyaml):
     return yaml.dump(configyaml)
 
 def parsetrackconfig(labname, labrootdir, configyml="config.yml"):
-    with open(labrootdir+labname+'/'+configyml, 'r') as stream:
+    with open(labrootdir+'/'+labname+'/'+configyml, 'r') as stream:
         try:
             parsed_yaml = yaml.safe_load(stream)
             return(parsed_yaml)
@@ -109,5 +117,25 @@ def createbackupdir(backupdir):
 def createbackupconfig(labname, sourcedir, backupdir):
     return shutil.copy2(sourcedir+'/'+labname+'/'+'config.yml', backupdir+'/'+labname+'_config.yml')
 
-def backupconfig():
-    return
+def findconfig(labs, dirlisting):
+    matchedlabs = []
+    try:
+        for lab in labs:
+            for dir in dirlisting:
+                if lab == dir:
+                    matchedlabs.append(dir)
+        return matchedlabs
+    except Exception as exc:
+        return exc
+
+def needsupdating(configsthatexist, newvm, labrootdir):
+    labstoupdate = []
+    for lab in configsthatexist:
+        configyml = parsetrackconfig(lab, labrootdir)
+        for vm in configyml['virtualmachines']:
+            if vm['image'] != newvm:
+                logging.info("Lab - {} - contains a vm - {} - that is using the wrong image - {}.".format(lab, vm['name'], vm['image']))
+                labstoupdate.append(lab)
+            else:
+                logging.info("Lab - {} - contains a vm - {} - that is using the right image - {}.".format(lab, vm['name'], vm['image']))
+    return labstoupdate
