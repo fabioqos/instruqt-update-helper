@@ -9,12 +9,15 @@ logger = logging.getLogger(__name__)
 def main():
     logger.info('Starting.')
     
-    Updateimagename.UpdateImageNames(config)
-    Pushlabs.PushLabs(config)
+    if check_labs:
+        Updateimagename.UpdateImageName(config)
+    else:
+        Updateimagename.UpdateImageName(config).UpdateImageNames()
+        Pushlabs.PushLabs(config)
         
     logger.info('Completed.')
     
     
 if __name__ == '__main__':
-    config = Parseargs.parse_arguments()
+    config, check_labs = Parseargs.parse_arguments()
     main()

@@ -8,134 +8,138 @@ import shutil
 
 logger = logging.getLogger(__name__)
 
-def getlabs(config):
-    # Get the list of labs. 
-    labs_string = config.get('instruqt', 'labs')
-    labs = json.loads(labs_string)
-    return labs
+class UpdateImageName:
+    def __init__(self, config) -> None:
+        self.config = config
 
-def getlabrootdir(config):
-    # Get the lab root directory.
-    labrootdir = config.get('instruqt', 'rhel_labs_root_dir')
-    return labrootdir
+        self.labs = self.getlabs()
+        logging.debug("Labs: {}".format(' '.join(map(str, self.labs))))
 
-def get_old_vm_image(config):
-    return config.get('oldimage', 'image').split()[0]
+        self.dirlisting = self.listdirectory()
+        logging.debug('Directory list: {}'.format(self.dirlisting))
 
-def get_new_vm_image(config):
-    return config.get('newimage', 'image').split()[0]
+        self.labrootdir = self.getlabrootdir()
+        logging.debug("Lab root directory: {}".format(self.labrootdir))
 
-def get_backup_dir(config):
-    return config.get('general', 'backupdir')
+        self.oldvm = self.get_old_vm_image()
+        logging.debug("Old VM image: {}".format(self.oldvm))
 
-def UpdateImageNames(config):
-    logging.info('Updating image names.')
+        self.newvm = self.get_new_vm_image()
+        logging.debug("New VM image: {}".format(self.newvm))
 
-    labs = getlabs(config)
-    logging.debug("Labs: {}".format(' '.join(map(str, labs))))
-    
-    dirlisting = listdirectory(config)
-    logging.debug('Directory list: {}'.format(dirlisting))
+        self.configfind = self.findconfig()
+        logging.debug('Labs {} found.'.format(self.configfind))
 
-    labrootdir = getlabrootdir(config)
-    logging.debug("Lab root directory: {}".format(labrootdir))
+        self.labstoupdate = self.needsupdating()
+        logging.debug('Labs to update {}.'.format(self.labstoupdate))
 
-    oldvm = get_old_vm_image(config)
-    logging.debug("Old VM image: {}".format(oldvm))
+    def getlabs(self):
+        # Get the list of labs. 
+        labs_string = self.config.get('instruqt', 'labs')
+        labs = json.loads(labs_string)
+        return labs
 
-    newvm = get_new_vm_image(config)
-    logging.debug("New VM image: {}".format(newvm))
+    def getlabrootdir(self):
+        # Get the lab root directory.
+        labrootdir = self.config.get('instruqt', 'rhel_labs_root_dir')
+        return labrootdir
 
-    configfind = findconfig(labs, dirlisting)
-    logging.debug('Labs {} found.'.format(configfind))
+    def get_old_vm_image(self):
+        return self.config.get('oldimage', 'image').split()[0]
 
-    labstoupdate = needsupdating(configfind, newvm,labrootdir)
-    logging.debug('Labs to update {}.'.format(labstoupdate))
+    def get_new_vm_image(self):
+        return self.config.get('newimage', 'image').split()[0]
 
-    backupdir = createbackupdir(get_backup_dir(config))
-    logging.debug('New backup dir {} created.'.format(backupdir))
+    def get_backup_dir(self):
+        return self.config.get('general', 'backupdir')
 
-    for lab in labstoupdate:
+    def UpdateImageNames(self):
+        logging.info('Updating image names.')
 
-        configyml = parsetrackconfig(lab, labrootdir)
-        logging.debug('Config YML: {}'.format(configyml))
+        backupdir = self.createbackupdir(self.get_backup_dir())
+        logging.debug('New backup dir {} created.'.format(backupdir))
 
-        newconfigyml = changevmimage(oldvm, newvm, configyml)
-        logging.debug('New Config YML: {}'.format(newconfigyml))
+        for lab in self.labstoupdate:
 
-        backup = createbackupconfig(lab, labrootdir, backupdir)
-        logging.debug('Backup created at {}'.format(backup))
+            configyml = self.parsetrackconfig(lab)
+            logging.debug('Config YML: {}'.format(configyml))
 
-        writtenconfig = writeconfig(newconfigyml, lab, labrootdir)
-        logging.debug(writtenconfig)
-    
-    return
+            newconfigyml = self.changevmimage(configyml)
+            logging.debug('New Config YML: {}'.format(newconfigyml))
 
-def listdirectory(config):
-    dir = config.get('instruqt', 'rhel_labs_root_dir')
-    return os.listdir(dir)
+            backup = self.createbackupconfig(lab, backupdir)
+            logging.debug('Backup created at {}'.format(backup))
 
-def changevmimage(oldvm, newvm, configyaml):
-    # This method will search and replace the instruqtconfigyaml for the oldimage and replace it with newimage.
-    # Returns YAML with new VMs where the oldvm is matched and replaced with newvm.
-    
-    for vm in configyaml["virtualmachines"]:
-        if vm["image"] == oldvm:
-            vm["image"] = newvm
+            writtenconfig = self.writeconfig(newconfigyml, lab)
+            logging.debug(writtenconfig)
+        
+        return
 
-    return yaml.dump(configyaml)
+    def listdirectory(self):
+        dir = self.config.get('instruqt', 'rhel_labs_root_dir')
+        return os.listdir(dir)
 
-def parsetrackconfig(labname, labrootdir, configyml="config.yml"):
-    with open(labrootdir+'/'+labname+'/'+configyml, 'r') as stream:
+    def changevmimage(self, configyml):
+        # This method will search and replace the instruqtconfigyaml for the oldimage and replace it with newimage.
+        # Returns YAML with new VMs where the oldvm is matched and replaced with newvm.
+        
+        for vm in configyml["virtualmachines"]:
+            if vm["image"] == self.oldvm:
+                vm["image"] = self.newvm
+
+        return yaml.dump(configyml)
+
+    def parsetrackconfig(self, labname, configyml="config.yml"):
+        with open(self.labrootdir+'/'+labname+'/'+configyml, 'r') as stream:
+            try:
+                parsed_yaml = yaml.safe_load(stream)
+                return(parsed_yaml)
+            except yaml.YAMLError as exc:
+                logging.error(exc)
+                sys.exit()
+
+    def writeconfig(self, newconfigyml, lab, configyml="config.yml"):
+        # Overwrite the config.yml file with the new config.
         try:
-            parsed_yaml = yaml.safe_load(stream)
-            return(parsed_yaml)
-        except yaml.YAMLError as exc:
+            file = open(self.labrootdir+'/'+lab+'/'+configyml, "w")
+            file.write(newconfigyml)
+            file.close
+            return('Config for lab {} written.'.format(lab)) 
+        except Exception as exc:
+            return(exc)
+
+    def createbackupdir(self, backupdir):
+        # Create a directory under backup/ with the date and time in the name.
+        try:
+            directory = backupdir+'/'+time.strftime("%Y%m%d-%H%M%S")
+            os.mkdir(directory)
+            return(directory)
+        except OSError as exc:
             logging.error(exc)
             sys.exit()
 
-def writeconfig(newconfigyml, labname, labrootdir, configyml="config.yml"):
-    # Overwrite the config.yml file with the new config.
-    try:
-        file = open(labrootdir+'/'+labname+'/'+configyml, "w")
-        file.write(newconfigyml)
-        file.close
-        return('Config for lab {} written.'.format(labname)) 
-    except Exception as exc:
-        return(exc)
+    def createbackupconfig(self, lab, backupdir):
+        return shutil.copy2(self.labrootdir+'/'+lab+'/'+'config.yml', backupdir+'/'+lab+'_config.yml')
 
-def createbackupdir(backupdir):
-    # Create a directory under backup/ with the date and time in the name.
-    try:
-        directory = backupdir+'/'+time.strftime("%Y%m%d-%H%M%S")
-        os.mkdir(directory)
-        return(directory)
-    except OSError as exc:
-        logging.error(exc)
-        sys.exit()
+    def findconfig(self):
+        matchedlabs = []
+        try:
+            for lab in self.labs:
+                for dir in self.dirlisting:
+                    if lab == dir:
+                        matchedlabs.append(dir)
+            return matchedlabs
+        except Exception as exc:
+            return exc
 
-def createbackupconfig(labname, sourcedir, backupdir):
-    return shutil.copy2(sourcedir+'/'+labname+'/'+'config.yml', backupdir+'/'+labname+'_config.yml')
-
-def findconfig(labs, dirlisting):
-    matchedlabs = []
-    try:
-        for lab in labs:
-            for dir in dirlisting:
-                if lab == dir:
-                    matchedlabs.append(dir)
-        return matchedlabs
-    except Exception as exc:
-        return exc
-
-def needsupdating(configsthatexist, newvm, labrootdir):
-    labstoupdate = []
-    for lab in configsthatexist:
-        configyml = parsetrackconfig(lab, labrootdir)
-        for vm in configyml['virtualmachines']:
-            if vm['image'] != newvm:
-                logging.info("Lab - {} - contains a vm - {} - that is using the wrong image - {}.".format(lab, vm['name'], vm['image']))
-                labstoupdate.append(lab)
-            else:
-                logging.info("Lab - {} - contains a vm - {} - that is using the right image - {}.".format(lab, vm['name'], vm['image']))
-    return labstoupdate
+    def needsupdating(self):
+        labstoupdate = []
+        for lab in self.configfind:
+            configyml = self.parsetrackconfig(lab)
+            for vm in configyml['virtualmachines']:
+                if vm['image'] != self.newvm:
+                    logging.info("Lab - {} - contains a vm - {} - that is using the wrong image - {}.".format(lab, vm['name'], vm['image']))
+                    labstoupdate.append(lab)
+                else:
+                    logging.info("Lab - {} - contains a vm - {} - that is using the right image - {}.".format(lab, vm['name'], vm['image']))
+        return labstoupdate
