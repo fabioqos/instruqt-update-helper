@@ -53,7 +53,7 @@ class UpdateImageName:
     def get_backup_dir(self):
         return self.config.get('general', 'backupdir')
 
-    def UpdateImageNames2(self):
+    def UpdateImageNames(self):
         logging.info('Updating image names.')
 
         backupdir = self.createbackupdir(self.get_backup_dir())
@@ -86,28 +86,6 @@ class UpdateImageName:
             writtenconfig = self.writeconfig(newconfigyml, lab)
             logging.debug(writtenconfig)
 
-        return
-
-    def UpdateImageNames(self):
-        logging.info('Updating image names.')
-
-        backupdir = self.createbackupdir(self.get_backup_dir())
-        logging.debug('New backup dir {} created.'.format(backupdir))
-
-        for lab in self.labstoupdate:
-
-            configyml = self.parsetrackconfig(lab)
-            logging.debug('Config YML: {}'.format(configyml))
-
-            newconfigyml = self.changevmimage(configyml)
-            logging.debug('New Config YML: {}'.format(newconfigyml))
-
-            backup = self.createbackupconfig(lab, backupdir)
-            logging.debug('Backup created at {}'.format(backup))
-
-            writtenconfig = self.writeconfig(newconfigyml, lab)
-            logging.debug(writtenconfig)
-        
         return
 
     def listdirectory(self):
