@@ -12,8 +12,8 @@ def main():
     if check_labs:
         Updateimagename.UpdateImageName(config)
     else:
-        # Updateimagename.UpdateImageName(config).UpdateImageNames()
-        Pushlabs.PushLabs(config)
+        Updateimagename.UpdateImageName(config).UpdateImageNames2()
+        #Pushlabs.PushLabs(config)
         
     logger.info('Completed.')
     

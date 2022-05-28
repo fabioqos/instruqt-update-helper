@@ -5,14 +5,16 @@
     "version": "0.2.0",
     "configurations": [
 
+
         {
-            "name": "Python: Current File",
+            "name": "Python: Instruqtupdate.py",
             "type": "python",
             "request": "launch",
-            "program": "${file}",
+            "program": "Instruqtupdate.py",
             "console": "integratedTerminal",
             "justMyCode": true,
             "stopOnEntry": true
+            //"args" : ["--check"]
         }
     ]
 }

@@ -53,6 +53,41 @@ class UpdateImageName:
     def get_backup_dir(self):
         return self.config.get('general', 'backupdir')
 
+    def UpdateImageNames2(self):
+        logging.info('Updating image names.')
+
+        backupdir = self.createbackupdir(self.get_backup_dir())
+        logging.debug('New backup dir {} created.'.format(backupdir))
+
+        for lab in self.labstoupdate:
+            # "lab" is the lab which contains VMs that need to have their images updated.
+            # 1. Parse the config file of the lab. 
+            # 2. Using the VM names in the lab kv pair, search for the VM in the config file. 
+            # 3. Replace the image name for the vm in the config file.
+            # 4. Backup the old config.yml.
+            # 5. Write the new config.yml file.
+
+            # 1. Parse the config file of the lab.
+            configyml = self.parsetrackconfig(lab)
+            logging.debug('Config YML: {}'.format(configyml))
+
+            # 2. Using the VM names from the lab KV pair, search for the VM in the config file.
+            vm_array = self.labstoupdate[lab]
+            
+            # 3. Replace the image name for the vm in the config file.
+            newconfigyml = self.changevmimage(configyml, vm_array)
+            logging.debug('New Config YML: {}'.format(newconfigyml))
+
+            # 4. Backup the old config.yml.
+            backup = self.createbackupconfig(lab, backupdir)
+            logging.debug('Backup created at {}'.format(backup))
+
+            # 5. Write the new config.yml file.
+            writtenconfig = self.writeconfig(newconfigyml, lab)
+            logging.debug(writtenconfig)
+
+        return
+
     def UpdateImageNames(self):
         logging.info('Updating image names.')
 
@@ -79,13 +114,14 @@ class UpdateImageName:
         dir = self.config.get('instruqt', 'rhel_labs_root_dir')
         return os.listdir(dir)
 
-    def changevmimage(self, configyml):
+    def changevmimage(self, configyml, vm_array):
         # This method will search and replace the instruqtconfigyaml for the oldimage and replace it with newimage.
         # Returns YAML with new VMs where the oldvm is matched and replaced with newvm.
-        
-        for vm in configyml["virtualmachines"]:
-            if vm["image"] == self.oldvm:
-                vm["image"] = self.newvm
+
+        for vm in vm_array:
+            for i, vm_in_conf in enumerate(configyml["virtualmachines"]):
+                if vm_in_conf["name"] == vm:
+                    configyml["virtualmachines"][i]["image"] = self.newvm
 
         return yaml.dump(configyml)
 
@@ -133,13 +169,20 @@ class UpdateImageName:
             return exc
 
     def needsupdating(self):
-        labstoupdate = []
+        labstoupdate = {}
         for lab in self.configfind:
             configyml = self.parsetrackconfig(lab)
+            vm_list = []
             for vm in configyml['virtualmachines']:
-                if vm['image'] != self.newvm:
-                    logging.info("Lab - {} - contains a vm - {} - that is using the wrong image - {}.".format(lab, vm['name'], vm['image']))
-                    labstoupdate.append(lab)
-                else:
-                    logging.info("Lab - {} - contains a vm - {} - that is using the right image - {}.".format(lab, vm['name'], vm['image']))
+                if vm['image'] == self.oldvm:
+                    logging.info("Lab - {} - contains a vm - {} - that is using the old image - {}.".format(lab, vm['name'], vm['image']))
+                    vm_list.append(vm['name'])
+                elif vm['image'] == self.newvm:
+                    logging.info("Lab - {} - contains a vm - {} - that is using the current image - {}.".format(lab, vm['name'], vm['image']))
+                else: 
+                    logging.info("Lab - {} - contains a vm - {} - that is using neither the old or current image - {}.".format(lab, vm['name'], vm['image']))
+            if vm_list == False:
+                logging.debug("Lab {} is up to date.".format(lab))
+            else:
+                labstoupdate[lab] = vm_list
         return labstoupdate
