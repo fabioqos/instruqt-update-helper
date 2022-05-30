@@ -10,11 +10,11 @@
             "name": "Python: Instruqtupdate.py",
             "type": "python",
             "request": "launch",
-            "program": "Instruqtupdate.py",
+            "program": "instruqt_update.py",
             "console": "integratedTerminal",
             "justMyCode": true,
-            "stopOnEntry": true
-            //"args" : ["--check"]
+            "stopOnEntry": true,
+            "args" : ["-p"]
         }
     ]
 }

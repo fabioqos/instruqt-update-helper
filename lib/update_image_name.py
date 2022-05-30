@@ -1,14 +1,16 @@
 import logging
 import json
 import os
-import yaml
 import time
 import sys
 import shutil
+import yaml
 
 logger = logging.getLogger(__name__)
 
 class UpdateImageName:
+    """Changes the "image:name" to the latest image specified in config/config.yml. 
+    """
     def __init__(self, config) -> None:
         self.config = config
 
@@ -164,3 +166,12 @@ class UpdateImageName:
             else:
                 labstoupdate[lab] = vm_list
         return labstoupdate
+
+    def createchecklist(self):
+        try:
+            file = open("status_"+time.strftime("%Y%m%d-%H%M%S")+".json", "w")
+            file.writelines(json.dumps(self.labstoupdate))
+            file.close
+            return
+        except Exception as exc:
+            return(exc)

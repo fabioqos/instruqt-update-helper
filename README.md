@@ -33,8 +33,29 @@ This will output the labs that are not up to date.
 
 ## Installation
 
+Clone this repo. In this example, we're running `git clone` from `/home/myee/instruqt_dev/`.
+
+```bash
+/home/myee/instruqt_dev/git clone https://github.com/myee111/instruqt-update-helper.git 
+```
+
 This script uses a venv.
-<stuff about the requirements.txt>
+
+```bash
+/home/myee/instruqt_dev/instruqt-update-helper/python -m pip install --user virtualenv
+```
+
+Activate the venv.
+
+```bash
+/home/myee/instruqt_dev/instruqt-update-helper/source /home/myee/instruqt_dev/instruqt-update-helper/.venv/bin/activate
+```
+
+Install the required python modules with pip.
+
+```bash
+/home/myee/instruqt_dev/instruqt-update-helper/python3 -m pip install -r requirements.txt
+```
 
 ## Configuration
 

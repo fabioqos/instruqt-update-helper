@@ -4,15 +4,26 @@ from configparser import SafeConfigParser
 
 logger = logging.getLogger(__name__)
 
-
 def parse_arguments():
+    """Parse arguments from config/config.yml.
+
+    Returns:
+        config: config file
+        check_labs: boolean
+        modify_labs: boolean
+        push_labs: boolean
+    """
     parser = argparse.ArgumentParser()
     parser.add_argument('--DEBUG', '-d', action='store_true', default=False, dest='level',
                         help='Set logging level to DEBUG.')
-    parser.add_argument('-c', action='store', type=str, dest='config_file', default='config/instruqt.conf',
+    parser.add_argument('--config', '-c', action='store', type=str, dest='config_file', default='config/instruqt.conf',
                         help='Specify the config file.  The default is config/instruqt.conf')
-    parser.add_argument('--check', action='store_true', default=False, dest='check_labs',
+    parser.add_argument('--check', '-k', action='store_true', default=False, dest='check_labs',
                         help='Specify whether to just run a check for whether images require updating. The script will check the image field in the lab config.yml to see whether it matches the newvm key in the instruqt.conf file.')
+    parser.add_argument('--modify', '-m', action='store_true', default=False, dest='modify_labs',
+                        help='Modify the config.yml files so that the old image (specified in the config.yml) is replaced with the new image.')
+    parser.add_argument('--push', '-p', action='store_true', default=False, dest='push_labs',
+                        help='Push the modified labs to Instruqt, initiating a lab rebuild.')
 
     results = parser.parse_args()
     config = SafeConfigParser()
@@ -21,8 +32,10 @@ def parse_arguments():
     set_debug = results.level
     log_file = results.config_file
     check_labs = results.check_labs
+    modify_labs = results.modify_labs
+    push_labs = results.push_labs
 
-    if config == {}:
+    if not config:
         logger.info('Config file is empty.  Exiting.')
         exit()
     else:
@@ -49,4 +62,4 @@ def parse_arguments():
     console.setFormatter(formatter)
     logging.getLogger('').addHandler(console)
 
-    return config, check_labs
+    return config, check_labs, modify_labs, push_labs
