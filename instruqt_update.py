@@ -20,11 +20,15 @@ def main():
         update_image_name.UpdateImageName(config).UpdateImageNames()
     elif push:
         push_labs.PushLabs(config)
+    elif list_labs:
+        update_image_name.UpdateImageName(config).createlablist()
+    elif pull_labs:
+        push_labs.PullLabs(config)
     else:
         logger.info('No options specified. Please run "python Instruqtupdate -h" for more information.')
 
     logger.info('Completed.')
 
 if __name__ == '__main__':
-    config, check_labs, modify_labs, push = parse_args.parse_arguments()
+    config, check_labs, modify_labs, push, list_labs, pull_labs = parse_args.parse_arguments()
     main()

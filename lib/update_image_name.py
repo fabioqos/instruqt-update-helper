@@ -175,3 +175,20 @@ class UpdateImageName:
             return
         except Exception as exc:
             return(exc)
+
+    def createlablist(self):
+        try:
+            file = open("list_of_labs_" +
+                        time.strftime("%Y%m%d-%H%M%S")+".txt", "w")
+            list_of_labs = self.dirlisting
+            list_of_labs.remove('.gitignore')
+            list_of_labs.remove('README.md')
+            list_of_labs.remove('.git')
+            list_of_labs.remove('maintenance')
+            list_of_labs.sort()
+            for lab in list_of_labs:
+                file.write("{}\n".format(lab))
+            file.close
+            return list_of_labs
+        except Exception as exc:
+            return(exc)

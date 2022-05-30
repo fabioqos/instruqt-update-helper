@@ -14,7 +14,7 @@
             "console": "integratedTerminal",
             "justMyCode": true,
             "stopOnEntry": true,
-            "args" : ["-p"]
+            "args" : ["-l"]
         }
     ]
 }

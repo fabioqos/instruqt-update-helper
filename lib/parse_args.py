@@ -24,6 +24,10 @@ def parse_arguments():
                         help='Modify the config.yml files so that the old image (specified in the config.yml) is replaced with the new image.')
     parser.add_argument('--push', '-p', action='store_true', default=False, dest='push_labs',
                         help='Push the modified labs to Instruqt, initiating a lab rebuild.')
+    parser.add_argument('--list', '-l', action='store_true', default=False, dest='list_labs',
+                        help='List labs found in specified lab directory.')
+    parser.add_argument('--pull', '-x', action='store_true', default=False, dest='pull_labs',
+                        help='Pull all labs found in the instruqt root dir .')
 
     results = parser.parse_args()
     config = SafeConfigParser()
@@ -34,6 +38,8 @@ def parse_arguments():
     check_labs = results.check_labs
     modify_labs = results.modify_labs
     push_labs = results.push_labs
+    list_labs = results.list_labs
+    pull_labs = results.pull_labs
 
     if not config:
         logger.info('Config file is empty.  Exiting.')
@@ -62,4 +68,4 @@ def parse_arguments():
     console.setFormatter(formatter)
     logging.getLogger('').addHandler(console)
 
-    return config, check_labs, modify_labs, push_labs
+    return config, check_labs, modify_labs, push_labs, list_labs, pull_labs
