@@ -140,6 +140,11 @@ class UpdateImageName:
         return shutil.copy2(self.labrootdir+'/'+lab+'/'+'config.yml', backupdir+'/'+lab+'_config.yml')
 
     def findconfig(self):
+        """Checks that the labs that exist in the instruqt root dir match the labs specified in the conf file.
+
+        Returns:
+            list of labs matched
+        """
         matchedlabs = []
         try:
             for lab in self.labs:
@@ -192,7 +197,7 @@ class UpdateImageName:
             list_of_labs.remove('maintenance')
             list_of_labs.sort()
             for lab in list_of_labs:
-                file.write("{}\n".format(lab))
+                file.write("\"{}\",\n".format(lab))
             file.close
             return list_of_labs
         except Exception as exc:
