@@ -36,7 +36,7 @@ This will output the labs that are not up to date.
 Clone this repo. In this example, we're running `git clone` from `/home/myee/instruqt_dev/`.
 
 ```bash
-/home/myee/instruqt_dev/git clone https://github.com/myee111/instruqt-update-helper.git 
+git clone https://github.com/myee111/instruqt-update-helper.git /home/myee/instruqt_dev/
 ```
 
 This script uses a venv.

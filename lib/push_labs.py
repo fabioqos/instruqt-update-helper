@@ -1,6 +1,5 @@
 import logging
 import subprocess
-from unittest import result
 import lib.update_image_name as update_image_name
 
 logger = logging.getLogger(__name__)
