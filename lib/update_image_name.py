@@ -8,9 +8,11 @@ import yaml
 
 logger = logging.getLogger(__name__)
 
+
 class UpdateImageName:
     """Changes the "image:name" to the latest image specified in config/config.yml. 
     """
+
     def __init__(self, config) -> None:
         self.config = config
 
@@ -36,14 +38,14 @@ class UpdateImageName:
         logging.debug('Labs to update {}.'.format(self.labstoupdate))
 
     def getlabs(self):
-        # Get the list of labs. 
+        # Get the list of labs.
         labs_string = self.config.get('instruqt', 'labs')
         labs = json.loads(labs_string)
         return labs
 
     def getlabrootdir(self):
         # Get the lab root directory.
-        labrootdir = self.config.get('instruqt', 'rhel_labs_root_dir')
+        labrootdir = self.config.get('instruqt', 'instruqt_root_dir')
         return labrootdir
 
     def get_old_vm_image(self):
@@ -63,8 +65,8 @@ class UpdateImageName:
 
         for lab in self.labstoupdate:
             # "lab" is the lab which contains VMs that need to have their images updated.
-            # 1. Parse the config file of the lab. 
-            # 2. Using the VM names in the lab kv pair, search for the VM in the config file. 
+            # 1. Parse the config file of the lab.
+            # 2. Using the VM names in the lab kv pair, search for the VM in the config file.
             # 3. Replace the image name for the vm in the config file.
             # 4. Backup the old config.yml.
             # 5. Write the new config.yml file.
@@ -75,7 +77,7 @@ class UpdateImageName:
 
             # 2. Using the VM names from the lab KV pair, search for the VM in the config file.
             vm_array = self.labstoupdate[lab]
-            
+
             # 3. Replace the image name for the vm in the config file.
             newconfigyml = self.changevmimage(configyml, vm_array)
             logging.debug('New Config YML: {}'.format(newconfigyml))
@@ -91,7 +93,7 @@ class UpdateImageName:
         return
 
     def listdirectory(self):
-        dir = self.config.get('instruqt', 'rhel_labs_root_dir')
+        dir = self.config.get('instruqt', 'instruqt_root_dir')
         return os.listdir(dir)
 
     def changevmimage(self, configyml, vm_array):
@@ -120,7 +122,7 @@ class UpdateImageName:
             file = open(self.labrootdir+'/'+lab+'/'+configyml, "w")
             file.write(newconfigyml)
             file.close
-            return('Config for lab {} written.'.format(lab)) 
+            return('Config for lab {} written.'.format(lab))
         except Exception as exc:
             return(exc)
 
@@ -155,12 +157,15 @@ class UpdateImageName:
             vm_list = []
             for vm in configyml['virtualmachines']:
                 if vm['image'] == self.oldvm:
-                    logging.info("Lab - {} - contains a vm - {} - that is using the old image - {}.".format(lab, vm['name'], vm['image']))
+                    logging.info(
+                        "Lab - {} - contains a vm - {} - that is using the old image - {}.".format(lab, vm['name'], vm['image']))
                     vm_list.append(vm['name'])
                 elif vm['image'] == self.newvm:
-                    logging.info("Lab - {} - contains a vm - {} - that is using the current image - {}.".format(lab, vm['name'], vm['image']))
-                else: 
-                    logging.info("Lab - {} - contains a vm - {} - that is using neither the old or current image - {}.".format(lab, vm['name'], vm['image']))
+                    logging.info(
+                        "Lab - {} - contains a vm - {} - that is using the current image - {}.".format(lab, vm['name'], vm['image']))
+                else:
+                    logging.info(
+                        "Lab - {} - contains a vm - {} - that is using neither the old or current image - {}.".format(lab, vm['name'], vm['image']))
             if vm_list == False:
                 logging.debug("Lab {} is up to date.".format(lab))
             else:

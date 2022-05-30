@@ -68,14 +68,14 @@ log = instruqt.log
 backupdir = backup
 
 [instruqt]
-instruqt_push_command = "instruqt track push"
-rhel_labs_root_dir = /home/myee/test/instruqt
+instruqt_push_command = instruqt track push
+instruqt_pull_command = instruqt track pull --force
+instruqt_root_dir = /home/myee/test/instruqt
 config_file_name = config.yml
 labs: [
-  "appstream-manage", 
-  "buildah", 
-  "containerize-app",
-  "test"
+  "test",
+  "unixisms",
+  "openscap"
   ]
 
 [oldimage]
@@ -83,4 +83,3 @@ image: projects/tmm-instruqt-11-26-2021/global/images/rhel-8-5-03-02-2022-1
 
 [newimage]
 image: projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1
-```
