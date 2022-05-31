@@ -9,6 +9,12 @@ The update operation will log the update in the instruqt.log file and make backu
 
 ## Instructions
 
+### Authenticate with Instruqt
+
+```bash
+instruqt auth login
+```
+
 ### Activate the venv
 
 This command will vary depending on the tool used. See `Installation` below for more details.
@@ -45,6 +51,126 @@ python instruqt_update.py --check
 ```
 
 This will output the labs that are not up to date.
+
+```bash
+(.venv) [myee@DESKTOP-L2GNENL instruqt-update-helper]$ python instruqt_update.py -k
+2022-05-31 07:54:49,623 INFO Starting.
+2022-05-31 07:54:49,624 DEBUG Labs: test unixisms openscap
+2022-05-31 07:54:49,624 DEBUG Directory list: ['service-admin', 'sql-server-cstore', 'installing-software-yum', 'sql-server-session-recording', 'customize-crypto-policy', '.gitignore', 'kpatch-apply', 'edge-management', 'sql-server-ansible', 'README.md', 'openscap', 'ebpf-tracing', 'webconsole-perf', 'insights-workshop', 'maintenance', '.git', 'podman-deploy', 'rhel-system-roles', 'webconsole-software', 'pcp-intro', 'file-access-policy', 'pcp-flamegraphs', 'sql-server-ubi', 'rhel-session-recording-tlog', 'session-recording-tlog', 'containerize-app', 'appstream-manage', 'sandbox', 'helpful-commands', 'user-basics', 'test', 'file-permissions', 'crypto-policy', 'buildah', 'sql-server-crypto-policy', 'unixisms', 'selinux-containers', 'satellite-basics', 'sql-server-insights']
+2022-05-31 07:54:49,624 DEBUG Lab root directory: /home/myee/instruqt_dev/instruqt
+2022-05-31 07:54:49,624 DEBUG Old VM image: projects/tmm-instruqt-11-26-2021/global/images/rhel-8-5-03-02-2022-1
+2022-05-31 07:54:49,625 DEBUG New VM image: projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1
+2022-05-31 07:54:49,625 DEBUG Labs ['test', 'unixisms', 'openscap'] found.
+2022-05-31 07:54:49,628 INFO Lab - test - contains a vm - rhel - that is using neither the old or current image - projects/tmm-instruqt-11-26-2021/global/images/satellite-2-15-22.
+2022-05-31 07:54:49,628 INFO Lab - test - contains a vm - rhel2 - that is using the current image - projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1.
+2022-05-31 07:54:49,628 INFO Lab - test - contains a vm - rhel3 - that is using the old image - projects/tmm-instruqt-11-26-2021/global/images/rhel-8-5-03-02-2022-1.
+2022-05-31 07:54:49,629 INFO Lab - unixisms - contains a vm - rhel - that is using the current image - projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1.
+2022-05-31 07:54:49,631 INFO Lab - openscap - contains a vm - rhel - that is using the current image - projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1.
+2022-05-31 07:54:49,631 DEBUG Labs to update {'test': ['rhel3'], 'unixisms': [], 'openscap': []}.
+2022-05-31 07:54:49,632 INFO Completed.
+```
+
+Next, modify the config file.
+
+```bash
+python instruqt_update --modify
+```
+
+```bash
+(.venv) [myee@DESKTOP-L2GNENL instruqt-update-helper]$ python instruqt_update.py --modify
+2022-05-31 07:56:24,564 INFO Starting.
+2022-05-31 07:56:24,565 DEBUG Labs: test unixisms openscap
+2022-05-31 07:56:24,565 DEBUG Directory list: ['service-admin', 'sql-server-cstore', 'installing-software-yum', 'sql-server-session-recording', 'customize-crypto-policy', '.gitignore', 'kpatch-apply', 'edge-management', 'sql-server-ansible', 'README.md', 'openscap', 'ebpf-tracing', 'webconsole-perf', 'insights-workshop', 'maintenance', '.git', 'podman-deploy', 'rhel-system-roles', 'webconsole-software', 'pcp-intro', 'file-access-policy', 'pcp-flamegraphs', 'sql-server-ubi', 'rhel-session-recording-tlog', 'session-recording-tlog', 'containerize-app', 'appstream-manage', 'sandbox', 'helpful-commands', 'user-basics', 'test', 'file-permissions', 'crypto-policy', 'buildah', 'sql-server-crypto-policy', 'unixisms', 'selinux-containers', 'satellite-basics', 'sql-server-insights']
+2022-05-31 07:56:24,565 DEBUG Lab root directory: /home/myee/instruqt_dev/instruqt
+2022-05-31 07:56:24,565 DEBUG Old VM image: projects/tmm-instruqt-11-26-2021/global/images/rhel-8-5-03-02-2022-1
+2022-05-31 07:56:24,565 DEBUG New VM image: projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1
+2022-05-31 07:56:24,566 DEBUG Labs ['test', 'unixisms', 'openscap'] found.
+2022-05-31 07:56:24,568 INFO Lab - test - contains a vm - rhel - that is using neither the old or current image - projects/tmm-instruqt-11-26-2021/global/images/satellite-2-15-22.
+2022-05-31 07:56:24,568 INFO Lab - test - contains a vm - rhel2 - that is using the current image - projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1.
+2022-05-31 07:56:24,568 INFO Lab - test - contains a vm - rhel3 - that is using the old image - projects/tmm-instruqt-11-26-2021/global/images/rhel-8-5-03-02-2022-1.
+2022-05-31 07:56:24,569 INFO Lab - unixisms - contains a vm - rhel - that is using the current image - projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1.
+2022-05-31 07:56:24,570 INFO Lab - openscap - contains a vm - rhel - that is using the current image - projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1.
+2022-05-31 07:56:24,570 DEBUG Labs to update {'test': ['rhel3'], 'unixisms': [], 'openscap': []}.
+2022-05-31 07:56:24,570 INFO Updating image names.
+2022-05-31 07:56:24,570 DEBUG New backup dir backup/20220531-075624 created.
+2022-05-31 07:56:24,572 DEBUG Config YML: {'version': '3', 'virtualmachines': [{'environment': {'TERM': 'xterm'}, 'image': 'projects/tmm-instruqt-11-26-2021/global/images/satellite-2-15-22', 'machine_type': 'n1-highmem-4', 'name': 'rhel', 'shell': '/bin/bash'}, {'environment': {'TERM': 'xterm'}, 'image': 'projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1', 'machine_type': 'n1-highmem-2', 'name': 'rhel2', 'shell': '/bin/bash'}, {'environment': {'TERM': 'xterm'}, 'image': 'projects/tmm-instruqt-11-26-2021/global/images/rhel-8-5-03-02-2022-1', 'machine_type': 'n1-highmem-2', 'name': 'rhel3', 'shell': '/bin/bash'}]}
+2022-05-31 07:56:24,573 DEBUG New Config YML: version: '3'
+virtualmachines:
+- environment:
+    TERM: xterm
+  image: projects/tmm-instruqt-11-26-2021/global/images/satellite-2-15-22
+  machine_type: n1-highmem-4
+  name: rhel
+  shell: /bin/bash
+- environment:
+    TERM: xterm
+  image: projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1
+  machine_type: n1-highmem-2
+  name: rhel2
+  shell: /bin/bash
+- environment:
+    TERM: xterm
+  image: projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1
+  machine_type: n1-highmem-2
+  name: rhel3
+  shell: /bin/bash
+
+2022-05-31 07:56:24,573 DEBUG Backup created at backup/20220531-075624/test_config.yml
+2022-05-31 07:56:24,574 DEBUG Config for lab test written.
+2022-05-31 07:56:24,575 DEBUG Config YML: {'version': '3', 'virtualmachines': [{'environment': {'TERM': 'xterm'}, 'image': 'projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1', 'machine_type': 'n1-standard-1', 'name': 'rhel', 'shell': '/bin/bash'}]}
+2022-05-31 07:56:24,575 DEBUG New Config YML: version: '3'
+virtualmachines:
+- environment:
+    TERM: xterm
+  image: projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1
+  machine_type: n1-standard-1
+  name: rhel
+  shell: /bin/bash
+
+2022-05-31 07:56:24,576 DEBUG Backup created at backup/20220531-075624/unixisms_config.yml
+2022-05-31 07:56:24,576 DEBUG Config for lab unixisms written.
+2022-05-31 07:56:24,577 DEBUG Config YML: {'version': '3', 'virtualmachines': [{'environment': {'TERM': 'xterm'}, 'image': 'projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1', 'machine_type': 'n1-standard-1', 'name': 'rhel', 'shell': '/bin/bash'}]}
+2022-05-31 07:56:24,578 DEBUG New Config YML: version: '3'
+virtualmachines:
+- environment:
+    TERM: xterm
+  image: projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1
+  machine_type: n1-standard-1
+  name: rhel
+  shell: /bin/bash
+
+2022-05-31 07:56:24,578 DEBUG Backup created at backup/20220531-075624/openscap_config.yml
+2022-05-31 07:56:24,578 DEBUG Config for lab openscap written.
+2022-05-31 07:56:24,578 INFO Completed.
+```
+
+Push the changes to instruqt.
+
+```bash
+python instruqt_update --push
+```
+
+```bash
+(.venv) [myee@DESKTOP-L2GNENL instruqt-update-helper]$ python instruqt_update.py --push
+2022-05-31 07:57:39,603 INFO Starting.
+2022-05-31 07:57:39,603 INFO Pushing labs.
+2022-05-31 07:57:39,603 DEBUG Labs: test unixisms openscap
+2022-05-31 07:57:39,603 DEBUG Directory list: ['service-admin', 'sql-server-cstore', 'installing-software-yum', 'sql-server-session-recording', 'customize-crypto-policy', '.gitignore', 'kpatch-apply', 'edge-management', 'sql-server-ansible', 'README.md', 'openscap', 'ebpf-tracing', 'webconsole-perf', 'insights-workshop', 'maintenance', '.git', 'podman-deploy', 'rhel-system-roles', 'webconsole-software', 'pcp-intro', 'file-access-policy', 'pcp-flamegraphs', 'sql-server-ubi', 'rhel-session-recording-tlog', 'session-recording-tlog', 'containerize-app', 'appstream-manage', 'sandbox', 'helpful-commands', 'user-basics', 'test', 'file-permissions', 'crypto-policy', 'buildah', 'sql-server-crypto-policy', 'unixisms', 'selinux-containers', 'satellite-basics', 'sql-server-insights']
+2022-05-31 07:57:39,603 DEBUG Lab root directory: /home/myee/instruqt_dev/instruqt
+2022-05-31 07:57:39,603 DEBUG Old VM image: projects/tmm-instruqt-11-26-2021/global/images/rhel-8-5-03-02-2022-1
+2022-05-31 07:57:39,603 DEBUG New VM image: projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1
+2022-05-31 07:57:39,604 DEBUG Labs ['test', 'unixisms', 'openscap'] found.
+2022-05-31 07:57:39,605 INFO Lab - test - contains a vm - rhel - that is using neither the old or current image - projects/tmm-instruqt-11-26-2021/global/images/satellite-2-15-22.
+2022-05-31 07:57:39,606 INFO Lab - test - contains a vm - rhel2 - that is using the current image - projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1.
+2022-05-31 07:57:39,606 INFO Lab - test - contains a vm - rhel3 - that is using the current image - projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1.
+2022-05-31 07:57:39,607 INFO Lab - unixisms - contains a vm - rhel - that is using the current image - projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1.
+2022-05-31 07:57:39,607 INFO Lab - openscap - contains a vm - rhel - that is using the current image - projects/tmm-instruqt-11-26-2021/global/images/rhel-8-6-05-10-2022-1.
+2022-05-31 07:57:39,607 DEBUG Labs to update {'test': [], 'unixisms': [], 'openscap': []}.
+2022-05-31 07:57:54,714 INFO Push result: b"==> Loading track files...\n    OK\n==> Checking challenges\n    OK\n==> Checking tabs\n    OK\n==> Checking scripts\n    OK\n==> Checking for leftover *.remote files\n    OK\n==> Reading track definition\n    OK\n==> Checking deltas\n    OK\n==> Pushing track\n    OK\n==> Pushing assets\n    Everything up-to-date\n    OK\n==> Updating local track:\n    OK\n==> Building track 'rhel/test' (ID: jc35qjmmymau)\n    Track URL: https://play.instruqt.com/rhel/tracks/test\n    OK\n"
+2022-05-31 07:57:55,791 INFO Push result: b'==> Loading track files...\n    OK\n==> Checking challenges\n    OK\n==> Checking tabs\n    OK\n==> Checking scripts\n    OK\n==> Checking for leftover *.remote files\n    OK\n==> Reading track definition\n    OK\n==> Checking deltas\n    Everything up-to-date\n    OK\n'
+2022-05-31 07:57:57,151 INFO Push result: b'==> Loading track files...\n    OK\n==> Checking challenges\n    OK\n==> Checking tabs\n    OK\n==> Checking scripts\n    OK\n==> Checking for leftover *.remote files\n    OK\n==> Reading track definition\n    OK\n==> Checking deltas\n    Everything up-to-date\n    OK\n'
+2022-05-31 07:57:57,151 INFO Completed.
+```
 
 ## Installation
 
