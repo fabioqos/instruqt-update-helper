@@ -195,6 +195,7 @@ class UpdateImageName:
             list_of_labs.remove('README.md')
             list_of_labs.remove('.git')
             list_of_labs.remove('maintenance')
+            list_of_labs.remove('.markdownlint.json')
             list_of_labs.sort()
             for lab in list_of_labs:
                 file.write("\"{}\",\n".format(lab))
