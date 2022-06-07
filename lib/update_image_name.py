@@ -160,17 +160,21 @@ class UpdateImageName:
         for lab in self.configfind:
             configyml = self.parsetrackconfig(lab)
             vm_list = []
-            for vm in configyml['virtualmachines']:
-                if vm['image'] == self.oldvm:
-                    logging.info(
-                        "Lab - {} - contains a vm - {} - that is using the old image - {}.".format(lab, vm['name'], vm['image']))
-                    vm_list.append(vm['name'])
-                elif vm['image'] == self.newvm:
-                    logging.info(
-                        "Lab - {} - contains a vm - {} - that is using the current image - {}.".format(lab, vm['name'], vm['image']))
-                else:
-                    logging.info(
-                        "Lab - {} - contains a vm - {} - that is using neither the old or current image - {}.".format(lab, vm['name'], vm['image']))
+            try:
+                for vm in configyml['virtualmachines']:
+                    if vm['image'] == self.oldvm:
+                        logging.info(
+                            "Lab - {} - contains a vm - {} - that is using the old image - {}.".format(lab, vm['name'], vm['image']))
+                        vm_list.append(vm['name'])
+                    elif vm['image'] == self.newvm:
+                        logging.info(
+                            "Lab - {} - contains a vm - {} - that is using the current image - {}.".format(lab, vm['name'], vm['image']))
+                    else:
+                        logging.info(
+                            "Lab - {} - contains a vm - {} - that is using neither the old or current image - {}.".format(lab, vm['name'], vm['image']))
+            except Exception as e:
+                logging.error("No VMs found. Caught exception {}".format(e))
+                
             if vm_list == False:
                 logging.debug("Lab {} is up to date.".format(lab))
             else:
