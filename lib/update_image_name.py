@@ -5,6 +5,9 @@ import time
 import sys
 import shutil
 import yaml
+from colorama import init, Fore
+
+init(autoreset=True)
 
 logger = logging.getLogger(__name__)
 
@@ -26,10 +29,10 @@ class UpdateImageName:
         logging.debug("Lab root directory: {}".format(self.labrootdir))
 
         self.oldvm = self.get_old_vm_image()
-        logging.debug("Old VM image: {}".format(self.oldvm))
+        logging.debug(Fore.WHITE + "Old VM image: {}".format(self.oldvm))
 
         self.newvm = self.get_new_vm_image()
-        logging.debug("New VM image: {}".format(self.newvm))
+        logging.debug(Fore.WHITE + "New VM image: {}".format(self.newvm))
 
         self.configfind = self.findconfig()
         logging.debug('Labs {} found.'.format(self.configfind))
@@ -163,14 +166,14 @@ class UpdateImageName:
             try:
                 for vm in configyml['virtualmachines']:
                     if vm['image'] == self.oldvm:
-                        logging.info(
+                        logging.info(Fore.RED +
                             "Lab - {} - contains a vm - {} - that is using the old image - {}.".format(lab, vm['name'], vm['image']))
                         vm_list.append(vm['name'])
                     elif vm['image'] == self.newvm:
-                        logging.info(
+                        logging.info(Fore.GREEN +
                             "Lab - {} - contains a vm - {} - that is using the current image - {}.".format(lab, vm['name'], vm['image']))
                     else:
-                        logging.info(
+                        logging.info(Fore.YELLOW +
                             "Lab - {} - contains a vm - {} - that is using neither the old or current image - {}.".format(lab, vm['name'], vm['image']))
             except Exception as e:
                 logging.error("No VMs found. Caught exception {}".format(e))
