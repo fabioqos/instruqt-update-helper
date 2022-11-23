@@ -20,19 +20,19 @@ git clone https://github.com/myee111/instruqt-update-helper.git /home/myee/instr
 This script uses a venv.
 
 ```bash
-virtualenv -p python3 /home/myee/instruqt_dev/instruqt-update-helper/
+python3 -m venv /Users/myee/repos/instruqt-update-helper/venv
 ```
 
 Activate the venv.
 
 ```bash
-source /home/myee/instruqt_dev/instruqt-update-helper/bin/activate
+source /Users/myee/repos/instruqt-update-helper/venv/bin/activate
 ```
 
 Install the required python modules with pip.
 
 ```bash
-pip install -r /home/myee/instruqt_dev/instruqt-update-helper/requirements.txt
+pip3 install -r /home/myee/instruqt_dev/instruqt-update-helper/requirements.txt
 ```
 
 ### Configuration
