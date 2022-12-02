@@ -162,6 +162,7 @@ options:
   --push, -p            Push the modified labs to Instruqt, initiating a lab rebuild.
   --list, -l            List labs found in specified lab directory.
   --pull, -x            Pull all labs found in the instruqt root dir .
+  --arbitrary-push, -ap Arbitrary push function to update lab regardless of VM image changes. This is for propagating arbitrary changes to labs.
 ```
 
 By default, the logging will be set to verbose. Backups of the config.yml for each lab are created in the backup directory (specified in the config/instruqt.conf file).
