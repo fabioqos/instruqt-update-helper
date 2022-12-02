@@ -163,3 +163,4 @@ backup/*
 crap.json
 status*.json
 list_of_labs*
+.vscode/

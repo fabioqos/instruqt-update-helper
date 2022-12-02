@@ -28,18 +28,21 @@ def parse_arguments():
                         help='List labs found in specified lab directory.')
     parser.add_argument('--pull', '-x', action='store_true', default=False, dest='pull_labs',
                         help='Pull all labs found in the instruqt root dir .')
+    parser.add_argument('--arbitrary-push', '-ap', action='store_true', default=False, dest='arb_push_labs',
+                        help='Arbitrarily push lab(s) to Instruqt, initiating a lab rebuild.')
 
     results = parser.parse_args()
     config = SafeConfigParser()
     config.read(results.config_file)
     
     set_debug = results.level
-    log_file = results.config_file
+    log_file = config['general']['log']
     check_labs = results.check_labs
     modify_labs = results.modify_labs
     push_labs = results.push_labs
     list_labs = results.list_labs
     pull_labs = results.pull_labs
+    arb_push = results.arb_push_labs
 
     if not config:
         logger.info('Config file is empty.  Exiting.')
@@ -47,7 +50,7 @@ def parse_arguments():
     else:
         log_file = config['general']['log']
         set_debug = config['general']['debug']
-
+        
     log_format = '%(asctime)s %(levelname)s %(message)s'
     console = logging.StreamHandler()
 
@@ -68,4 +71,4 @@ def parse_arguments():
     console.setFormatter(formatter)
     logging.getLogger('').addHandler(console)
 
-    return config, check_labs, modify_labs, push_labs, list_labs, pull_labs
+    return config, check_labs, modify_labs, push_labs, list_labs, pull_labs, arb_push
